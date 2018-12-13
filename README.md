@@ -1,8 +1,8 @@
 # CNN-DeepSig
 
-<aside class="notice">
+<div style="background-color: #ff9696; font-size: 20px; text-align: center; font-weight: bold;">
 Before run run.sh, please delete <mark style="background-color: #ff9696">avg_acu.txt</mark>
-</aside>
+</div>
 
 ## Usage (only tested on Ubuntu)
 1. build virtualenv
@@ -13,9 +13,5 @@ Before run run.sh, please delete <mark style="background-color: #ff9696">avg_acu
 
 <style>
 .notice {
-	background-color: #ff9696;
-    font-size: 20px;
-    text-align: center;
-    font-weight: bold;
 }
 </style>
