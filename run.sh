@@ -2,8 +2,8 @@
 i=0
 while [ $i -lt 20 ]; do
 	echo $i
-	python model.py
-	python test_saved_model.py
+	python3 model.py
+	python3 test_saved_model.py
 	i=$((i+1))
 done
 
