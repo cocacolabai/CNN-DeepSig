@@ -7,7 +7,6 @@ def readdata(filename, maxlen, dataset='train'):
     Y = []
     with open(filename, 'r') as f:
         for ID, seq, label in fastaer(f, dataset):
-            X.append(seq2input(seq.replace('U', 'C'), maxlen))
             if dataset == 'train':
                 b = 2 * [0]
                 if 'S' in label:
@@ -15,6 +14,7 @@ def readdata(filename, maxlen, dataset='train'):
                 else:
                     b[1] = 1
                 Y.append(b)
+            X.append(seq2input(seq.replace('U', 'C'), maxlen))
 
     if dataset == 'train':
         return np.array(pad_sequences(X, padding='post', maxlen=maxlen)), np.array(Y)
@@ -23,12 +23,23 @@ def readdata(filename, maxlen, dataset='train'):
 
 def seq2input(seq, maxlen):
     aa_order = 'VLIMFWYGAPSTCHRKQEND'
+    # aa_order = 'ARNDCQEGHILKMFPSTWYV'
+    # aa_order = 'ACDEFGHIKLMNPQRSTVWY'
+    water_like = 'GYNQSTC'
+    anti_water = 'AVLIFWMP'
+    other = 'DHEKR'
     maxlen_20 = []
     for alphabet in seq[:maxlen]:
         m_20 = [0.0]*20
         try:
             i = aa_order.index(alphabet)
-            m_20[i] = 1.0
+            if alphabet in water_like:
+                m_20[i] = 2.0
+            elif alphabet in anti_water:
+                m_20[i] = -2.0
+            else:
+                m_20[i] = 1.0
+            # m_20[i] = 1.0
         except ValueError:
             pass
         maxlen_20.append(m_20)
@@ -82,3 +93,30 @@ def avg_acu(filename):
                 break
             sum_ += float(line)
     print(sum_/20)
+
+
+def check_train_data(filename, maxlen, dataset='train'):
+    X = []
+    Y = []
+    count = dict()
+    with open(filename, 'r') as f:
+        for ID, seq, label in fastaer(f, dataset):
+            if dataset == 'train':
+                b = 2 * [0]
+                if 'S' in label:
+                    b[0] = 1
+                    for a in seq[:label.count('S')]:
+                        if a in count.keys():
+                            count[a] = count[a] + 1
+                        else:
+                            count[a] = 1
+                else:
+                    b[1] = 1
+                Y.append(b)
+            X.append(seq2input(seq.replace('U', 'C'), maxlen))
+    print(sorted([(key, count[key]) for key in count], key=lambda x: x[1], reverse=True))
+
+    if dataset == 'train':
+        return np.array(pad_sequences(X, padding='post', maxlen=maxlen)), np.array(Y)
+    else:
+        return np.array(pad_sequences(X, padding='post', maxlen=maxlen))

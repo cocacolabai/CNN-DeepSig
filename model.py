@@ -4,8 +4,6 @@ from keras.layers import Input, Dense, Dropout, Activation, Flatten
 from keras.layers import Conv1D, Conv2D, AveragePooling1D, MaxPooling2D
 from keras.initializers import VarianceScaling
 from keras.utils import np_utils
-from keras.datasets import mnist
-
 
 np.random.seed(123)
 
@@ -59,7 +57,10 @@ from helper import readdata
 X, Y = readdata(TRAIN, 96, 'train')
 
 model.fit(X, Y,
-          batch_size=32, epochs=EPOCH, verbose=1, validation_split=VALIDATION_RATE)
+         batch_size=32, epochs=EPOCH, verbose=1, validation_split=VALIDATION_RATE)
+
+#model.fit(X, Y,
+#          epochs=EPOCH, verbose=1, validation_split=VALIDATION_RATE)
 
 model.save_weights('model_weights.h5')
 

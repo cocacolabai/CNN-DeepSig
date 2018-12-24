@@ -1,6 +1,8 @@
 from keras.models import model_from_json
 from helper import readdata, get_result
 import numpy as np
+import os
+import sys
 
 with open('json_model.json', 'r') as f:
     json_string = f.read()
@@ -36,6 +38,9 @@ FN = S_N
 
 print()
 print('TP:', TP,'TN:', TN,'FP:', FP,'FN:', FN)
+print('S: ', S_S, S_N)
+print('T: ', N_S_1, N_N_1)
+print('N: ', N_S_2, N_N_2)
 
 divv = TP*TN-FP*FN
 div = np.sqrt((TP+FP)*(TP+FN)*(TN+FP)*(TN+FN))
@@ -43,6 +48,10 @@ print('MCC numerator:\t\t', divv)
 print('MCC denominator:\t', div)
 MCC = divv / div
 print('MCC: ', MCC)
+
+if len(sys.argv) == 2 and sys.argv[1] == '0':
+    if os.path.exists('avg_acu.txt'):
+        os.remove('avg_acu.txt')
 
 with open('avg_acu.txt', 'a') as f:
     f.write(str(float(MCC)))
