@@ -11,9 +11,11 @@ EPOCH = 10
 TRAIN = './dataset/train.fasta'
 TEST = './dataset/test_SP.fasta_out'
 VALIDATION_RATE = 0.25
+LENGTH = 108
 
 # build CNN model
-input_1 = Input(shape=(96, 20))
+# 40 20 10 5
+input_1 = Input(shape=(LENGTH, 20))
 
 conv1d_1_bias_init = VarianceScaling(scale=1.0, mode='fan_avg', distribution='uniform', seed=None)
 conv1d_1 = Conv1D(filters=40, kernel_size=5,
@@ -54,7 +56,7 @@ model.compile(loss='categorical_crossentropy',
               metrics=['accuracy'])
 
 from helper import readdata
-X, Y = readdata(TRAIN, 96, 'train')
+X, Y = readdata(TRAIN, LENGTH, 'train')
 
 model.fit(X, Y,
          batch_size=32, epochs=EPOCH, verbose=1, validation_split=VALIDATION_RATE)
@@ -65,9 +67,11 @@ model.fit(X, Y,
 model.save_weights('model_weights.h5')
 
 # In prediction, index 0 is for signal peptide, index 1 for other.
-X_test = readdata(TEST, 96, 'test')
+"""
+X_test = readdata(TEST, LENGTH, 'test')
 Y_pred = model.predict(X_test)
 pred = np.argmax(Y_pred, axis=1)
+"""
 
 
 # print prediction result of positive sample

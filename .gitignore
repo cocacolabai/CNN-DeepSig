@@ -1,6 +1,7 @@
 avg_acu.txt
 model_weight.h5
 json_model.json
+graph
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

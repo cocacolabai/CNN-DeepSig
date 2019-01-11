@@ -4,6 +4,14 @@ import numpy as np
 import os
 import sys
 
+if len(sys.argv) == 2 and sys.argv[1] == '0':
+    if os.path.exists('avg_acu.txt'):
+        os.remove('avg_acu.txt')
+    if os.path.exists('detail.txt'):
+        os.remove('detail.txt')
+
+LENGTH = 108
+
 with open('json_model.json', 'r') as f:
     json_string = f.read()
 
@@ -17,9 +25,9 @@ model.load_weights('model_weights.h5')
     FN: the number of under-predictions in the signal peptide class
 """
 
-X_p = readdata('./dataset/test_SP.fasta_out', 96, 'test')
-X_n_1 = readdata('./dataset/test_TM.fasta_out', 96, 'test')
-X_n_2 = readdata('./dataset/test_NC.fasta_out', 96, 'test')
+X_p = readdata('./dataset/test_SP.fasta_out', LENGTH, 'test')
+X_n_1 = readdata('./dataset/test_TM.fasta_out', LENGTH, 'test')
+X_n_2 = readdata('./dataset/test_NC.fasta_out', LENGTH, 'test')
 
 p_pred = model.predict(X_p)
 n_1_pred = model.predict(X_n_1)
@@ -49,10 +57,16 @@ print('MCC denominator:\t', div)
 MCC = divv / div
 print('MCC: ', MCC)
 
-if len(sys.argv) == 2 and sys.argv[1] == '0':
-    if os.path.exists('avg_acu.txt'):
-        os.remove('avg_acu.txt')
 
 with open('avg_acu.txt', 'a') as f:
     f.write(str(float(MCC)))
     f.write('\n')
+
+with open('detail.txt', 'a') as f:
+    f.write('TP: ' + str(TP) + ' TN: ' + str(TN) + ' FP: ' + str(FP) + ' FN: ' + str(FN) + '\n')
+    f.write('S: ' + str(S_S) + ' ' + str(S_N) + '\n')
+    f.write('T: ' + str(N_S_1) + ' ' + str(N_N_1) + '\n')
+    f.write('N: ' + str(N_S_2) + ' ' + str(N_N_2) + '\n')
+    f.write('MCC numerator:\t\t' + str(divv) + '\n')
+    f.write('MCC denominator:\t' + str(div) + '\n')
+    f.write('MCC: ' + str(MCC) + '\n\n')
